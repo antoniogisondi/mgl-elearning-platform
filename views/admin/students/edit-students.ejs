@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifica lo studente</title>
+</head>
+<body>
+    <h1>Modifica corsista: <%= student.nome %> <%= student.cognome %></h1>
+    <form action="/admin/dashboard/students/edit/<%= student._id %>" method="POST">
+        <label for="nome">Nome:</label>
+        <input type="text" name="nome" id="nome" value="<%= student.nome %>" required />
+        <br />
+        <label for="cognome">Cognome:</label>
+        <input type="text" name="cognome" id="cognome" value="<%= student.cognome %>" required/>
+        <br />
+        <label for="codice_fiscale">Codice Fiscale:</label>
+        <input type="text" name="codice_fiscale" id="codice_fiscale" value="<%= student.codice_fiscale %>" required />
+        <br />
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" value="<%= student.email %>" required />
+        <br />
+    
+        <button type="submit">Modifica Corsista</button>
+    </form>
+</body>
+</html>

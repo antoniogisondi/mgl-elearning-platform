@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crea il corsista</title>
+</head>
+<body>
+    <h1>Crea il corsista</h1>
+    <form action="/admin/dashboard/students/create" method="POST">
+        <label for="nome">Nome Corsista</label>
+        <input type="text" name="nome" id="nome">
+        <br>
+        <label for="cognome">Cognome Corsista</label>
+        <input type="text" name="cognome" id="cognome">
+        <br>
+        <label for="codice_fiscale">Codice Fiscale Corsista</label>
+        <input type="text" name="codice_fiscale" id="codice_fiscale">
+        <br>
+        <label for="email">Email Corsista</label>
+        <input type="text" name="email" id="email">
+        <br>
+        
+        <button type="submit">Crea Corsista</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I Corsi</title>
+    <script>
+        function addModule() {
+            const moduleContainer = document.getElementById("module-container");
+            const moduleCount = moduleContainer.children.length;
+    
+            const newModule = `
+            <div class="module">
+                <h4>Modulo ${moduleCount + 1}</h4>
+                <label for="modulo_${moduleCount}">Nome Modulo:</label>
+                <input type="text" name="programma_corso[${moduleCount}][modulo]" id="modulo_${moduleCount}" required />
+                <br />
+                <label for="descrizione_${moduleCount}">Descrizione:</label>
+                <textarea name="programma_corso[${moduleCount}][descrizione]" id="descrizione_${moduleCount}" required></textarea>
+                <br />
+                <label for="durata_${moduleCount}">Durata (ore):</label>
+                <input type="number" name="programma_corso[${moduleCount}][durata]" id="durata_${moduleCount}" required />
+                <br />
+                <button type="button" onclick="removeModule(this)">Rimuovi Modulo</button>
+            </div>
+            <hr />
+            `;
+            moduleContainer.insertAdjacentHTML("beforeend", newModule);
+        }
+    
+        function removeModule(button) {
+            button.parentElement.remove();
+        }
+    </script>
+</head>
+<body>
+    <h1>Crea il corso</h1>
+    <form action="/admin/dashboard/courses/create" method="POST">
+        <label for="nome_corso">Titolo:</label>
+        <input type="text" name="nome_corso" id="nome_corso" required />
+        <br />
+        <label for="categoria_corso">Descrizione:</label>
+        <input type="text" name="categoria_corso" id="categoria_corso" required/>
+        <br />
+        <label for="numero_autorizzazione">Autore:</label>
+        <input type="text" name="numero_autorizzazione" id="numero_autorizzazione" required />
+        <br />
+        <label for="durata">Durata (ore):</label>
+        <input type="number" name="durata" id="durata" required />
+        <br />
+        <h3>Programma del corso</h3>
+        <div id="module-container"></div>
+        <button type="button" onclick="addModule()">Aggiungi Modulo</button>
+        <br /><br />
+    
+        <button type="submit">Crea Corso</button>
+    </form>
+    
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corsisti</title>
+</head>
+<body>
+    <h1>Visualizza i corsisti</h1>
+    <a href="/admin/dashboard/students/create">Crea il corsista</a>
+
+    <table>
+        <thead>
+            <tr>
+                <td>N°</td>
+                <td>Nome</td>
+                <td>Cognome</td>
+                <td>Codice Fiscale</td>
+                <td>Email</td>
+            </tr>
+        </thead>
+        <tbody>
+            <% students.forEach((student,index) => { %>
+            <tr>
+                <td :key="index"><%= index +1 %></td>
+                <td><%= student.nome %></td>
+                <td><%= student.cognome %></td>
+                <td><%= student.codice_fiscale %></td>
+                <td><%= student.email %></td>
+                <td>
+                    <a href="/admin/dashboard/students/edit/<%= student._id %>">Modifica il corsista</a>
+                </td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</body>
+</html>
