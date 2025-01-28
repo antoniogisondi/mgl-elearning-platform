@@ -29,6 +29,9 @@
                 <td><%=course.status%></td>
                 <td>
                     <a href="/admin/dashboard/courses/edit/<%= course._id %>">Modifica il corso</a>
+                    <form action="/admin/dashboard/courses/delete/<%= course._id %>?_method=DELETE" method="post">
+                        <input type="submit" value="Elima il corso">
+                    </form>
                 </td>
             </tr>
             <% }) %>

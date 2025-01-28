@@ -1,4 +1,5 @@
 const Student = require('../models/Student')
+const Course = require('../models/Course')
 
 exports.ViewStudents = async (req,res) => {
     try {
@@ -63,5 +64,64 @@ exports.UpdateStudentsPost = async (req,res) => {
     } catch (error) {
         console.error("Errore nell'aggiornare il corsista:", error);
         res.status(500).send("Errore nell'aggiornare il corsista");
+    }
+}
+
+exports.AssignCoursesGet = async (req,res) => {
+    try {
+        const student = await Student.findById(req.params.id)
+        const courses = await Course.find()
+        res.render('admin/students/assign-courses', {student, courses})
+    } catch (error) {
+        console.error("Errore nel recuperare corsista o corsi:", error);
+        res.status(500).send("Errore nel recuperare corsista o corsi");
+    }
+}
+
+exports.AssignCoursesPost = async (req,res) => {
+    const { courseId } = req.body
+    try {
+        const student = await Student.findById(req.params.id)
+        if (!student) return res.status(404).send("Corsista non trovato");
+
+        const course = await Course.findById(courseId)
+        if (!course) return res.status(404).send("Corso non trovato");
+
+        if (!student.assignedCourses.includes(courseId)) {
+            student.assignedCourses.push(courseId)
+            await student.save()
+        }
+
+        if (!course.assignedTo.includes(student._id)) {
+            course.assignedTo.push(student._id)
+            await course.save()
+            
+        }
+
+        res.redirect("/admin/dashboard/students");
+    } catch (error) {
+        console.error("Errore nell'assegnare il corso:", error);
+        res.status(500).send("Errore nell'assegnare il corso");
+    }
+}
+
+exports.DeleteStudents = async (req,res) => {
+    try {
+        const studentId = req.params.id
+        const student = await Student.findByIdAndDelete(studentId)
+
+        if(!student){
+            return res.status(404).send('Corsista non trovato')
+        }
+
+        await Course.updateMany(
+            {assignedTo: studentId},
+            {$pull: {assignedTo: studentId}}
+        )
+
+        res.redirect('/admin/dashboard/students')
+    } catch (error) {
+        console.error("Errore nella cancellazione del corsista:", error);
+        res.status(500).send("Errore nella cancellazione del corsista");
     }
 }

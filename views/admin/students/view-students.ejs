@@ -29,6 +29,10 @@
                 <td><%= student.email %></td>
                 <td>
                     <a href="/admin/dashboard/students/edit/<%= student._id %>">Modifica il corsista</a>
+                    <form action="/admin/dashboard/students/delete/<%= student._id %>?_method=DELETE" method="post">
+                        <input type="submit" value="Elimina il corsista">
+                    </form>
+                    <a href="/admin/dashboard/students/assign/<%= student._id %>">Assegna corso</a>
                 </td>
             </tr>
             <% }) %>

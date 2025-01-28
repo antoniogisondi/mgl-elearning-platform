@@ -1,4 +1,5 @@
 const Course = require('../models/Course')
+const Student = require('../models/Student')
 
 exports.ViewCourses = async (req,res) => {
     try {
@@ -57,5 +58,25 @@ exports.UpdateCoursesPost = async (req,res) => {
     } catch (err) {
         console.error("Errore nell'aggiornare il corso:", err);
         res.status(500).send("Errore nell'aggiornare il corso");
+    }
+}
+
+exports.DeleteCourses = async (req,res) => {
+    try {
+        const courseId = req.params.id
+        const course = await Course.findByIdAndDelete(courseId)
+        if(!course){
+            return res.status(404).send('Corso non trovato')
+        }
+
+        await Student.updateMany(
+            {assignedCourses: courseId},
+            {$pull: {assignedCourses: courseId}}
+        )
+
+        res.redirect('/admin/dashboard/courses')
+    } catch (error) {
+        console.error("Errore nella cancellazione del corso:", error);
+        res.status(500).send("Errore nella cancellazione del corso");
     }
 }

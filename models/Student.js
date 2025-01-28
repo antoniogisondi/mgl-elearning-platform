@@ -10,8 +10,8 @@ const StudentSchema = new mongoose.Schema({
     password: {type:String, unique:true},
     assignedCourses: [
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Course", // Riferimento ai corsi assegnati
+          type: mongoose.Schema.Types.ObjectId, // Deve essere ObjectId
+          ref: "Course", // Deve riferirsi al modello "Course"
         },
     ],
 })

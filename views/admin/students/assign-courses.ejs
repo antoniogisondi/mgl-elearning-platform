@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assegna il corso</title>
+</head>
+<body>
+    <h1>Assegna Corso a <%= student.nome %> <%= student.cognome %></h1>
+    <form action="/admin/dashboard/students/assign/<%= student._id %>" method="POST">
+        <label for="courseId">Seleziona un corso:</label>
+        <select name="courseId" id="courseId" required>
+        <% courses.forEach(course => { %>
+            <option value="<%= course._id %>"><%= course.nome_corso %></option>
+        <% }) %>
+        </select>
+        <br />
+        <button type="submit">Assegna Corso</button>
+    </form>
+</body>
+</html>

@@ -2,6 +2,7 @@ const express = require('express')
 const session = require('express-session')
 const passport = require('./config/passportConfig')
 const flash = require('connect-flash')
+const methodOverride = require('method-override')
 const cors = require('cors')
 const dotenv = require('dotenv');
 const connectDB = require('./config/db')
@@ -14,6 +15,8 @@ app.set('views', './views')
 app.set('view engine', 'ejs')
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+app.use(methodOverride('_method'))
 
 app.use(
     session({
