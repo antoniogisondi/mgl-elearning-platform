@@ -17,6 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use(methodOverride('_method'))
+app.use(cors({origin: process.env.FRONTEND_URL , methods: 'GET,POST,PUT,DELETE', credentials: true,}))
 
 app.use(
     session({
@@ -35,6 +36,7 @@ const authRoutes = require('./routes/auth')
 const dashboard = require('./routes/dashboard')
 const coursesRoutes = require('./routes/courses')
 const studentsRoutes = require('./routes/students')
+const api = require('./routes/api')
 
 app.use((req, res, next) => {
     res.locals.success_msg = req.flash("success_msg")
@@ -47,6 +49,7 @@ app.use('/', authRoutes)
 app.use('/admin', ensureAuthenticated, dashboard)
 app.use('/admin', ensureAuthenticated, coursesRoutes)
 app.use('/admin', ensureAuthenticated, studentsRoutes)
+app.use('/api', api)
 
 app.use('/', (req,res) => {
     res.render('homepage')

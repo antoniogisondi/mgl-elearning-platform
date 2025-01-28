@@ -11,7 +11,11 @@
         <li><%= student.codice_fiscale %></li>
         <li><%= student.email %></li>
         <li><%= student.username %></li>
-        <li><%= student.password %></li>
+        <% if (student.plainPassword) { %>
+            <li><strong>Password:</strong> <%= student.plainPassword %></li>
+        <% } else { %>
+            <li><em>La password è criptata e non può essere visualizzata.</em></li>
+        <% } %>
         <li><% student.assignedCourses.forEach((course,index) => { %>
             <ul>
                 <li><%= course.nome_corso %></li>

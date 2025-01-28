@@ -1,5 +1,6 @@
 const Student = require('../models/Student')
 const Course = require('../models/Course')
+const bcrypt = require('bcryptjs')
 
 exports.ViewStudents = async (req,res) => {
     try {
@@ -24,7 +25,8 @@ exports.CreateStudents = async (req,res) => {
             codice_fiscale,
             email,
             username,
-            password
+            password: await bcrypt.hash(password, 10),
+            plainPassword: password
         })
 
         await newStudent.save()
@@ -41,8 +43,12 @@ exports.DetailsStudents = async (req,res) => {
         if (!student) {
             return res.status(404).send("Corsista non trovato");
         }
+
+        const plainPassword = student.plainPassword
+        student.plainPassword = undefined
+        await student.save()
     
-        res.render("admin/students/details-students", { student });
+        res.render("admin/students/details-students", { student: {...student.toObject(), plainPassword} });
     } catch (err) {
         console.error("Errore nel recuperare i dettagli del corsista:", err);
         res.status(500).send("Errore nel recuperare i dettagli del corsista");
@@ -137,5 +143,27 @@ exports.DeleteStudents = async (req,res) => {
     } catch (error) {
         console.error("Errore nella cancellazione del corsista:", error);
         res.status(500).send("Errore nella cancellazione del corsista");
+    }
+}
+
+// API FRONTOFFICE
+
+exports.StudentsLogin = async (req,res) => {
+    const {username, password} = req.body
+    try {
+        const student = await Student.findOne({username})
+        if (!student) {
+            return res.status(401).json({message:'Utente non trovato'})
+        }
+
+        const comparePw = await bcrypt.compare(password, student.password)
+
+        if (!comparePw) {
+            res.status(401).json({message: 'Credenziali non valide'})
+        }
+
+        res.json({student: student})
+    } catch (error) {
+        res.status(500).json({message:'Errore del server'})
     }
 }
