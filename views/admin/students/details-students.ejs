@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dettaglio corsista</title>
+</head>
+<body>
+    <h1>Dettaglio corsista <%= student.nome %> <%= student.cognome %></h1>
+    <ul>
+        <li><%= student.codice_fiscale %></li>
+        <li><%= student.email %></li>
+        <li><%= student.username %></li>
+        <li><%= student.password %></li>
+        <li><% student.assignedCourses.forEach((course,index) => { %>
+            <ul>
+                <li><%= course.nome_corso %></li>
+                <li><%= course.numero_autorizzazione %></li>
+                <li><%= course.durata %></li>
+            </ul>
+            <% }) %>
+        </li>
+    </ul>
+</body>
+</html>

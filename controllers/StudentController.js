@@ -35,6 +35,20 @@ exports.CreateStudents = async (req,res) => {
     }
 }
 
+exports.DetailsStudents = async (req,res) => {
+    try {
+        const student = await Student.findById(req.params.id).populate('assignedCourses')
+        if (!student) {
+            return res.status(404).send("Corsista non trovato");
+        }
+    
+        res.render("admin/students/details-students", { student });
+    } catch (err) {
+        console.error("Errore nel recuperare i dettagli del corsista:", err);
+        res.status(500).send("Errore nel recuperare i dettagli del corsista");
+    }
+}
+
 exports.UpdateStudentsGet = async (req,res) => {
     try {
         const student = await Student.findById(req.params.id)

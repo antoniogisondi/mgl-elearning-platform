@@ -28,6 +28,21 @@ exports.CreateCourses = async (req, res) => {
     }
 }
 
+exports.DetailsCourses = async (req,res) => {
+    try {
+        const course = await Course.findById(req.params.id).populate('assignedTo')
+
+        if (!course) {
+            return res.status(404).send('Corso non trovato')
+        }
+
+        res.render('admin/courses/details-courses', {course})
+    } catch (error) {
+        console.error("Errore nel recuperare i dettagli del corso:", error);
+        res.status(500).send("Errore nel recuperare i dettagli del corso");
+    }
+}
+
 exports.UpdateCoursesGet = async (req,res) => {
     try {
         const course = await Course.findById(req.params.id)

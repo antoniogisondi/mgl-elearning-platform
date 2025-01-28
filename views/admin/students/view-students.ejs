@@ -28,6 +28,7 @@
                 <td><%= student.codice_fiscale %></td>
                 <td><%= student.email %></td>
                 <td>
+                    <a href="/admin/dashboard/students/details/<%= student._id %>">Visualizza dettagli corsista</a>
                     <a href="/admin/dashboard/students/edit/<%= student._id %>">Modifica il corsista</a>
                     <form action="/admin/dashboard/students/delete/<%= student._id %>?_method=DELETE" method="post">
                         <input type="submit" value="Elimina il corsista">

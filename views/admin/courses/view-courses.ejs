@@ -28,6 +28,7 @@
                 <td><%=new Date(course.data_richiesta).toLocaleDateString('it-IT')%></td>
                 <td><%=course.status%></td>
                 <td>
+                    <a href="/admin/dashboard/courses/details/<%= course._id %>">Visualizza dettagli corso</a>
                     <a href="/admin/dashboard/courses/edit/<%= course._id %>">Modifica il corso</a>
                     <form action="/admin/dashboard/courses/delete/<%= course._id %>?_method=DELETE" method="post">
                         <input type="submit" value="Elima il corso">
