@@ -1,6 +1,7 @@
 const Student = require('../models/Student')
 const Course = require('../models/Course')
 const bcrypt = require('bcryptjs')
+const passport = require('passport')
 
 exports.ViewStudents = async (req,res) => {
     try {
@@ -148,22 +149,52 @@ exports.DeleteStudents = async (req,res) => {
 
 // API FRONTOFFICE
 
-exports.StudentsLogin = async (req,res) => {
-    const {username, password} = req.body
-    try {
-        const student = await Student.findOne({username})
-        if (!student) {
-            return res.status(401).json({message:'Utente non trovato'})
-        }
+exports.StudentsLogin = (req, res, next) => {
+    passport.authenticate("student", (err, student, info) => {
+    if (err) {
+    console.error("Errore durante l'autenticazione:", err);
+    return res.status(500).json({ message: "Errore del server" });
+    }
+    if (!student) {
+    console.log("Autenticazione fallita: Credenziali non valide");
+    return res.status(401).json({ message: "Credenziali non valide" });
+    }
 
-        const comparePw = await bcrypt.compare(password, student.password)
+    req.login(student, (err) => {
+    if (err) {
+        console.error("Errore durante il login:", err);
+        return res.status(500).json({ message: "Errore durante il login" });
+    }
 
-        if (!comparePw) {
-            res.status(401).json({message: 'Credenziali non valide'})
-        }
+    console.log("Login riuscito per:", student);
+    res.status(200).json({ student });
+    });
+})(req, res, next);
+};
 
-        res.json({student: student})
-    } catch (error) {
-        res.status(500).json({message:'Errore del server'})
+// exports.AuthStudents = async (req,res) => {
+//     if (req.isAuthenticated()) {
+//         try {
+//             const student = await Student.findById(req.user._id)
+//             if (student) {
+//                 return res.status(200).json({ student });
+//             } else {
+//                 return res.status(401).json({ message: "Non autenticato come corsista" });
+//             }
+//         } catch (error) {
+//             return res.status(500).json({ message: "Errore del server", error });
+//         }
+//     } else {
+//         return res.status(401).json({ message: "Non autenticato" });
+//     }
+// }
+
+exports.AuthStudents = async (req,res) => {
+    console.log("Sessione:", req.session); // Debug: verifica se il cookie è associato alla sessione
+    console.log("Utente autenticato:", req.student);
+    if (req.isAuthenticated()) {
+        res.status(200).json({ student: req.student });
+    } else {
+        res.status(401).json({ message: "Non autenticato" });
     }
 }

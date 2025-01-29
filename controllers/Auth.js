@@ -23,7 +23,7 @@ exports.register = async (req,res) => {
 }
 
 exports.login = (req,res,next) => {
-    passport.authenticate("local", {
+    passport.authenticate("admin", {
         successRedirect: "/admin/dashboard", // Reindirizza alla dashboard
         failureRedirect: "/login", // Reindirizza al login in caso di fallimento
         failureFlash: true, // Mostra messaggi di errore (se configurato)
