@@ -150,48 +150,19 @@ exports.DeleteStudents = async (req,res) => {
 // API FRONTOFFICE
 
 exports.StudentsLogin = (req, res, next) => {
-    passport.authenticate("student", (err, student, info) => {
-    if (err) {
-    console.error("Errore durante l'autenticazione:", err);
-    return res.status(500).json({ message: "Errore del server" });
-    }
-    if (!student) {
-    console.log("Autenticazione fallita: Credenziali non valide");
-    return res.status(401).json({ message: "Credenziali non valide" });
-    }
+    console.log("Dati ricevuti:", req.body); // LOG per debug
+    passport.authenticate('student', (err, student, info) => {
+        if (err) return res.status(500).json({ message: "Errore del server" });
+        if (!student) return res.status(401).json({ message: info.message });
 
-    req.login(student, (err) => {
-    if (err) {
-        console.error("Errore durante il login:", err);
-        return res.status(500).json({ message: "Errore durante il login" });
-    }
-
-    console.log("Login riuscito per:", student);
-    res.status(200).json({ student });
-    });
-})(req, res, next);
+        req.login(student, (err) => {
+            if (err) return res.status(500).json({ message: "Errore durante il login" });
+            return res.status(200).json({ student });
+        });
+    })(req, res, next);
 };
 
-// exports.AuthStudents = async (req,res) => {
-//     if (req.isAuthenticated()) {
-//         try {
-//             const student = await Student.findById(req.user._id)
-//             if (student) {
-//                 return res.status(200).json({ student });
-//             } else {
-//                 return res.status(401).json({ message: "Non autenticato come corsista" });
-//             }
-//         } catch (error) {
-//             return res.status(500).json({ message: "Errore del server", error });
-//         }
-//     } else {
-//         return res.status(401).json({ message: "Non autenticato" });
-//     }
-// }
-
 exports.AuthStudents = async (req,res) => {
-    console.log("Sessione:", req.session); // Debug: verifica se il cookie è associato alla sessione
-    console.log("Utente autenticato:", req.student);
     if (req.isAuthenticated()) {
         res.status(200).json({ student: req.student });
     } else {

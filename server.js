@@ -1,6 +1,5 @@
 const express = require('express')
 const session = require('express-session')
-const passport = require('passport')
 const passportAdmin = require('./config/passportConfig')
 const passportStudent = require('./config/studentsPassportConfig')
 const flash = require('connect-flash')
@@ -17,9 +16,6 @@ app.set('views', './views')
 app.set('view engine', 'ejs')
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-app.use(methodOverride('_method'))
-app.use(cors({origin: process.env.FRONTEND_URL , methods: 'GET,POST,PUT,DELETE', credentials: true,}))
 app.use(
     session({
         secret: process.env.SECRET_KEY,
@@ -28,12 +24,17 @@ app.use(
     })
 );
 
+
+app.use(methodOverride('_method'))
+app.use(cors({origin: process.env.FRONTEND_URL , methods: 'GET,POST,PUT,DELETE', credentials: true,}))
 app.use(flash())
 
-passportAdmin(passport)
-passportStudent(passport)
-app.use(passport.initialize());
-app.use(passport.session());
+
+app.use(passportStudent.initialize());
+app.use(passportStudent.session());
+
+app.use(passportAdmin.initialize());
+app.use(passportAdmin.session());
 
 const authRoutes = require('./routes/auth')
 const dashboard = require('./routes/dashboard')
