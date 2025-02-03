@@ -16,23 +16,28 @@ app.set('views', './views')
 app.set('view engine', 'ejs')
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(
-    session({
-        secret: process.env.SECRET_KEY,
-        resave: false,
-        saveUninitialized: false,
-    })
-);
 
+const adminSession = session({
+    name: 'admin.sid',
+    secret: process.env.SECRET_KEY,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {httpOnly: true, secure:false}
+})
+
+const studentSession = session({
+    name: 'student.sid',
+    secret: process.env.SECRET_KEY,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {httpOnly: true, secure:false}
+})
 
 app.use(methodOverride('_method'))
 app.use(cors({origin: process.env.FRONTEND_URL , methods: 'GET,POST,PUT,DELETE', credentials: true,}))
 app.use(flash())
 
-
-app.use(passportStudent.initialize());
-app.use(passportStudent.session());
-
+app.use(adminSession)
 app.use(passportAdmin.initialize());
 app.use(passportAdmin.session());
 
@@ -53,7 +58,7 @@ app.use('/', authRoutes)
 app.use('/admin', ensureAuthenticated, dashboard)
 app.use('/admin', ensureAuthenticated, coursesRoutes)
 app.use('/admin', ensureAuthenticated, studentsRoutes)
-app.use('/api', api)
+app.use('/api', studentSession, passportStudent.initialize(), passportStudent.session(), api)
 
 app.use('/', (req,res) => {
     res.render('homepage')
