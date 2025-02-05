@@ -1,45 +1,43 @@
-const LocalStrategy = require('passport-local').Strategy
-const bcrypt = require('bcryptjs')
-const Student = require('../models/Student')
-const passportStudent = require('passport')
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const Student = require('../models/Student'); // Modello degli studenti
+const bcrypt = require('bcryptjs');
 
-passportStudent.use(
-    "student",
-    new LocalStrategy({ usernameField: "username" }, async (username, password, done) => {
+// Strategia di autenticazione per gli studenti
+passport.use(new LocalStrategy(
+    { usernameField: 'username' }, // Email come campo username
+    async (username, password, done) => {
         try {
             const student = await Student.findOne({ username });
             if (!student) {
-                return done(null, false, { message: "Studente non trovato" });
+                return done(null, false, { message: 'Studente non trovato' });
             }
-
             const isMatch = await bcrypt.compare(password, student.password);
             if (!isMatch) {
-                return done(null, false, { message: "Password errata" });
+                return done(null, false, { message: 'Password errata' });
             }
-
             return done(null, student);
-        } catch (err) {
-            return done(err);
+        } catch (error) {
+            return done(error);
         }
-    })
-);
+    }
+));
 
-passportStudent.serializeUser((student, done) => {
-    console.log("Serializzazione:", student._id);
-    done(null, student._id);
+// Serializza lo studente
+passport.serializeUser((student, done) => {
+    console.log("Serializzando studente:", student.id);
+    done(null, student.id);
 });
 
-passportStudent.deserializeUser(async (id, done) => {
+// Deserializza lo studente
+passport.deserializeUser(async (id, done) => {
     try {
         const student = await Student.findById(id);
-        if (!student) {
-            return done(null, false);
-        }
-        console.log("Deserializzazione:", student);
+        console.log("Deserializzando studente:", student);
         done(null, student);
     } catch (err) {
         done(err);
     }
 });
 
-module.exports = passportStudent
+module.exports = passport;

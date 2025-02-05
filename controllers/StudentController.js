@@ -150,34 +150,22 @@ exports.DeleteStudents = async (req,res) => {
 // API FRONTOFFICE
 
 exports.StudentsLogin = (req, res, next) => {
-    passport.authenticate("student", (err, student, info) => {
+    passport.authenticate('local', (err, user, info) => {
         if (err) {
-            console.error("Errore durante l'autenticazione:", err);
-            return res.status(500).json({ message: "Errore del server" });
+            console.error("Errore durante il login:", err);
+            return res.status(500).json({ message: "Errore interno del server" });
         }
-
-        if (!student) {
-            // Credenziali errate o non fornite
-            console.log("Autenticazione fallita:", info ? info.message : "Credenziali non valide");
-            return res.status(401).json({ message: info ? info.message : "Credenziali non valide" });
+        if (!user) {
+            console.log("Utente non trovato o password errata");
+            return res.status(401).json({ message: info.message });
         }
-
-        req.login(student, (err) => {
+        req.login(user, (err) => {
             if (err) {
                 console.error("Errore durante il login:", err);
-                return res.status(500).json({ message: "Errore durante il login" });
+                return res.status(500).json({ message: "Errore interno del server" });
             }
-
-            console.log("Login riuscito per:", student);
-            res.status(200).json({ message: "Login riuscito", student });
+            console.log("Utente autenticato con successo:", user);
+            return res.status(200).json({ user });
         });
     })(req, res, next);
 };
-
-exports.AuthStudents = (req,res) => {
-    if(req.user){
-        return res.status(200).json(req.user); // Restituisce i dati dello studente
-    } else {
-        return res.status(401).json({ message: "Non autenticato" });
-    }
-}

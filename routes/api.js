@@ -1,13 +1,12 @@
 const express = require('express')
 const router = express.Router()
-const {authStudents} = require('../middleware/authMiddleware')
-const {StudentsLogin, AuthStudents} = require('../controllers/StudentController')
+const {StudentsLogin} = require('../controllers/StudentController')
 
 // API FRONTOFFICE
 
 router.post('/login', StudentsLogin)
 
-router.get("/logout", (req, res, next) => {
+router.get("/logout", async (req, res, next) => {
     req.logout((err) => {
         if (err) return next(err);
         req.session.destroy((error) => {
@@ -18,6 +17,12 @@ router.get("/logout", (req, res, next) => {
     });
 });
 
-router.get('/auth', authStudents, AuthStudents)
+router.get('/auth', (req, res) => {
+    if (req.isAuthenticated()) {
+        return res.status(200).json(req.user);
+    } else {
+        return res.status(401).json({ message: "Non autenticato" });
+    }
+});
 
 module.exports = router

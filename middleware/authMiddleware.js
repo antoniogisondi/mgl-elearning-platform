@@ -5,12 +5,12 @@ const ensureAuthenticated = (req, res, next) => {
     res.redirect("/login"); // Non autenticato, reindirizza al login
 };
 
-const authStudents = (req,res) => {
+const authStudents = (req, res, next) => {
   if (req.isAuthenticated()) {
-    return next();
+      return next();
   } else {
-    return res.status(401).json({ message: "Non autenticato" });
+      return res.status(401).json({ message: "Non autenticato" });
   }
-}
+};
 
 module.exports = { ensureAuthenticated, authStudents };
