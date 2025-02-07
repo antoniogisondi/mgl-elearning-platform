@@ -18,10 +18,12 @@ router.get("/logout", async (req, res, next) => {
 });
 
 router.get('/auth', (req, res) => {
+    console.log("Utente autenticato nella auth:", req.student);
+    console.log("req.isAuthenticated():", req.isAuthenticated());
     if (req.isAuthenticated()) {
-        return res.status(200).json(req.user);
+        res.status(200).json({ student: req.user });
     } else {
-        return res.status(401).json({ message: "Non autenticato" });
+        res.status(401).json({ message: "Non autenticato" });
     }
 });
 

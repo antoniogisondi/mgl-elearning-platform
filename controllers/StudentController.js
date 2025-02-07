@@ -150,22 +150,22 @@ exports.DeleteStudents = async (req,res) => {
 // API FRONTOFFICE
 
 exports.StudentsLogin = (req, res, next) => {
-    passport.authenticate('local', (err, user, info) => {
+    passport.authenticate("student", (err, student, info) => {
         if (err) {
             console.error("Errore durante il login:", err);
             return res.status(500).json({ message: "Errore interno del server" });
         }
-        if (!user) {
+        if (!student) {
             console.log("Utente non trovato o password errata");
             return res.status(401).json({ message: info.message });
         }
-        req.login(user, (err) => {
+        req.login(student, (err) => {
             if (err) {
                 console.error("Errore durante il login:", err);
                 return res.status(500).json({ message: "Errore interno del server" });
             }
-            console.log("Utente autenticato con successo:", user);
-            return res.status(200).json({ user });
+            console.log("Utente autenticato con successo:", student);
+            return res.status(200).json({ student });
         });
     })(req, res, next);
 };

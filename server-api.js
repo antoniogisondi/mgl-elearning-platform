@@ -18,30 +18,22 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride('_method'))
 app.use(cors({origin: process.env.FRONTEND_URL , methods: 'GET,POST,PUT,DELETE', credentials: true,}))
-app.use(flash())
 
-app.use(session({
-    name: 'student.sid',
+const studentSession = session({
+    name: "student.sid",
     secret: process.env.SECRET_KEY,
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({
-        mongoUrl: process.env.MONGO_URI,
-        collectionName: 'sessions', // Nome della collezione per le sessioni
-    }),
     cookie: {
+        path: '/',
         httpOnly: true,
-        secure: false, // Cambia in true in produzione (HTTPS)
-        maxAge: 1000 * 60 * 60 * 24, // Durata del cookie: 1 giorno
+        secure: false, // Deve essere true in produzione con HTTPS
+        sameSite: "lax",
+        maxAge: 1000 * 60 * 60 * 24, // 1 giorno
     },
-}))
-
-app.use((req, res, next) => {
-    console.log("Sessione attiva:", req.session);
-    console.log("Utente autenticato:", req.user);
-    next();
 });
 
+app.use(studentSession)
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -60,3 +52,4 @@ app.use('/api', api)
 app.listen(port, () => console.log(`Server API avviato su http://localhost:${port}`));
 
 connectDB()
+
