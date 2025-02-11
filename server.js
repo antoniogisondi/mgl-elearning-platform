@@ -2,6 +2,7 @@ const express = require('express')
 const session = require('express-session')
 const passportAdmin = require('./config/passportConfig')
 const flash = require('connect-flash')
+const cors = require('cors')
 const methodOverride = require('method-override')
 const dotenv = require('dotenv');
 const connectDB = require('./config/db')
@@ -16,9 +17,13 @@ app.set('view engine', 'ejs')
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride('_method'))
+app.use(cors({
+    origin: process.env.FRONTEND_URL, 
+    methods: 'GET,POST,PUT,DELETE',
+    allowedHeaders: "Content-Type,Authorization",
+}));
 
 app.use(session({
-    name: 'admin.sid',
     secret: process.env.SECRET_KEY,
     resave: false,
     saveUninitialized: false,
@@ -39,11 +44,13 @@ const authRoutes = require('./routes/auth')
 const dashboard = require('./routes/dashboard')
 const coursesRoutes = require('./routes/courses')
 const studentsRoutes = require('./routes/students')
+const api = require('./routes/api')
 
 app.use('/', authRoutes)
 app.use('/admin', ensureAuthenticated, dashboard)
 app.use('/admin', ensureAuthenticated, coursesRoutes)
 app.use('/admin', ensureAuthenticated, studentsRoutes)
+app.use('/api', api)
 
 app.use('/', (req,res) => {
     res.render('homepage')
@@ -52,3 +59,4 @@ app.use('/', (req,res) => {
 app.listen(port, () => console.log(`Server Admin avviato su http://localhost:${port}`));
 
 connectDB()
+

@@ -1,7 +1,11 @@
 const Student = require('../models/Student')
 const Course = require('../models/Course')
 const bcrypt = require('bcryptjs')
-const passport = require('passport')
+const jwt = require('jsonwebtoken')
+
+const generateToken = (id) =>{
+    return jwt.sign({id}, process.env.JWT_SECRET, {expiresIn: '1h'})
+}
 
 exports.ViewStudents = async (req,res) => {
     try {
@@ -149,23 +153,29 @@ exports.DeleteStudents = async (req,res) => {
 
 // API FRONTOFFICE
 
-exports.StudentsLogin = (req, res, next) => {
-    passport.authenticate("student", (err, student, info) => {
-        if (err) {
-            console.error("Errore durante il login:", err);
-            return res.status(500).json({ message: "Errore interno del server" });
-        }
+exports.StudentsLogin = async (req, res) => {
+    const {username, password} = req.body
+
+    try {
+        const student = await Student.findOne({username})
         if (!student) {
-            console.log("Utente non trovato o password errata");
-            return res.status(401).json({ message: info.message });
+            return res.status(401).json({message: 'Studente non trovato'})
         }
-        req.login(student, (err) => {
-            if (err) {
-                console.error("Errore durante il login:", err);
-                return res.status(500).json({ message: "Errore interno del server" });
-            }
-            console.log("Utente autenticato con successo:", student);
-            return res.status(200).json({ student });
-        });
-    })(req, res, next);
+
+        const isMatch = await bcrypt.compare(password, student.password)
+        if (!isMatch) {
+            return res.status(401).json({message: 'Password errata'})
+        }
+
+        const token = generateToken(student.id)
+
+        res.status(200).json({
+            message: 'Login riuscito',
+            token,
+            student
+        })
+    } catch (error) {
+        console.error("Errore durante il login:", error);
+        res.status(500).json({ message: "Errore del server" });
+    }
 };
