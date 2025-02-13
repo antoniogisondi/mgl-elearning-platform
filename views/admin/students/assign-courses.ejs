@@ -11,7 +11,7 @@
         <label for="courseId">Seleziona un corso:</label>
         <select name="courseId" id="courseId" required>
         <% courses.forEach(course => { %>
-            <option value="<%= course._id %>"><%= course.nome_corso %></option>
+            <option value="<%= course.titolo %>"><%= course.titolo %></option>
         <% }) %>
         </select>
         <br />

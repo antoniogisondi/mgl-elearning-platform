@@ -42,13 +42,11 @@ app.use((req, res, next) => {
 
 const authRoutes = require('./routes/auth')
 const dashboard = require('./routes/dashboard')
-const coursesRoutes = require('./routes/courses')
 const studentsRoutes = require('./routes/students')
 const api = require('./routes/api')
 
 app.use('/', authRoutes)
 app.use('/admin', ensureAuthenticated, dashboard)
-app.use('/admin', ensureAuthenticated, coursesRoutes)
 app.use('/admin', ensureAuthenticated, studentsRoutes)
 app.use('/api', api)
 

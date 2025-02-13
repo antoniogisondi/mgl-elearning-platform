@@ -1,11 +1,14 @@
 const Student = require('../models/Student')
-const Course = require('../models/Course')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const fs = require('fs')
+const path = require('path')
 
 const generateToken = (id) =>{
     return jwt.sign({id}, process.env.JWT_SECRET, {expiresIn: '1h'})
 }
+
+const coursesPath = path.join(__dirname, '../config/courses.json')
 
 exports.ViewStudents = async (req,res) => {
     try {
@@ -44,7 +47,7 @@ exports.CreateStudents = async (req,res) => {
 
 exports.DetailsStudents = async (req,res) => {
     try {
-        const student = await Student.findById(req.params.id).populate('assignedCourses')
+        const student = await Student.findById(req.params.id)
         if (!student) {
             return res.status(404).send("Corsista non trovato");
         }
@@ -94,9 +97,9 @@ exports.UpdateStudentsPost = async (req,res) => {
 
 exports.AssignCoursesGet = async (req,res) => {
     try {
+        const coursesData = JSON.parse(fs.readFileSync(coursesPath, 'utf-8'))
         const student = await Student.findById(req.params.id)
-        const courses = await Course.find()
-        res.render('admin/students/assign-courses', {student, courses})
+        res.render('admin/students/assign-courses', {student, courses:coursesData})
     } catch (error) {
         console.error("Errore nel recuperare corsista o corsi:", error);
         res.status(500).send("Errore nel recuperare corsista o corsi");

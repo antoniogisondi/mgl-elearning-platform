@@ -1,0 +1,20 @@
+[
+    {
+        "nome_corso": "Corso di JavaScript",
+        "categoria_corso": "Programmazione",
+        "durata": "4 settimane",
+        "descrizione": "Un corso avanzato su JavaScript e le sue funzionalità."
+    },
+    {
+        "nome_corso": "Corso di React",
+        "categoria_corso": "Programmazione",
+        "durata": "6 settimane",
+        "descrizione": "Impara React.js con progetti pratici e funzionalità avanzate."
+    },
+    {
+        "nome_corso": "Corso di Node.js",
+        "categoria_corso": "Programmazione",
+        "durata": "5 settimane",
+        "descrizione": "Sviluppa backend scalabili con Node.js ed Express."
+    }
+]

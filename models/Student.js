@@ -11,19 +11,12 @@ const StudentSchema = new mongoose.Schema({
     plainPassword : {type:String},
     assignedCourses: [
         {
-          type: mongoose.Schema.Types.ObjectId, // Deve essere ObjectId
-          ref: "Course", // Deve riferirsi al modello "Course"
+          nome_corso: { type: String, required: true },
+          categoria_corso: { type: String },
+          durata: { type: String },
+          descrizione: { type: String }
         },
     ],
 })
-
-// StudentSchema.pre('save', async function (next) {
-//     if (!this.isModified('password')) {
-//         return next()
-//     }
-
-//     this.password = await bcrypt.hash(this.password, 10)
-//     next()
-// })
 
 module.exports = mongoose.model('Student', StudentSchema)
