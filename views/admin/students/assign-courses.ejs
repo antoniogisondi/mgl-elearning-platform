@@ -8,11 +8,11 @@
 <body>
     <h1>Assegna Corso a <%= student.nome %> <%= student.cognome %></h1>
     <form action="/admin/dashboard/students/assign/<%= student._id %>" method="POST">
-        <label for="courseId">Seleziona un corso:</label>
-        <select name="courseId" id="courseId" required>
-        <% courses.forEach(course => { %>
-            <option value="<%= course.titolo %>"><%= course.titolo %></option>
-        <% }) %>
+        <label for="course">Seleziona un corso:</label>
+        <select name="courseId" id="course" required>
+            <% courses.forEach(course => { %>
+                <option value="<%= course.id %>"><%= course.nome_corso %> - <%= course.durata %></option>
+            <% }) %>
         </select>
         <br />
         <button type="submit">Assegna Corso</button>

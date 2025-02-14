@@ -13,8 +13,9 @@ const StudentSchema = new mongoose.Schema({
         {
           nome_corso: { type: String, required: true },
           categoria_corso: { type: String },
+          descrizione: { type: String },
           durata: { type: String },
-          descrizione: { type: String }
+          numero_autorizzazione: {type: String, unique: true}
         },
     ],
 })

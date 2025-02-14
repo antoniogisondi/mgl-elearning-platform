@@ -8,7 +8,18 @@ const generateToken = (id) =>{
     return jwt.sign({id}, process.env.JWT_SECRET, {expiresIn: '1h'})
 }
 
-const coursesPath = path.join(__dirname, '../config/courses.json')
+const getCourses = () => {
+    const filePath = path.join(__dirname, "../config/courses.json");
+    const data = fs.readFileSync(filePath, "utf8");
+    return JSON.parse(data);
+};
+
+const getAuthNumber = () => {
+    const prefix = 'MGL'
+    const randomNumber = Math.floor(100000 + Math.random() * 900000)
+    const numeroAuth = `${prefix}/${randomNumber}`
+    return numeroAuth
+}
 
 exports.ViewStudents = async (req,res) => {
     try {
@@ -97,9 +108,9 @@ exports.UpdateStudentsPost = async (req,res) => {
 
 exports.AssignCoursesGet = async (req,res) => {
     try {
-        const coursesData = JSON.parse(fs.readFileSync(coursesPath, 'utf-8'))
+        const courses = getCourses()
         const student = await Student.findById(req.params.id)
-        res.render('admin/students/assign-courses', {student, courses:coursesData})
+        res.render('admin/students/assign-courses', {student, courses})
     } catch (error) {
         console.error("Errore nel recuperare corsista o corsi:", error);
         res.status(500).send("Errore nel recuperare corsista o corsi");
@@ -112,21 +123,22 @@ exports.AssignCoursesPost = async (req,res) => {
         const student = await Student.findById(req.params.id)
         if (!student) return res.status(404).send("Corsista non trovato");
 
-        const course = await Course.findById(courseId)
+        const courses = getCourses()
+        const course = courses.find(c => c.id === courseId)
         if (!course) return res.status(404).send("Corso non trovato");
 
-        if (!student.assignedCourses.includes(courseId)) {
-            student.assignedCourses.push(courseId)
-            await student.save()
-        }
+        student.assignedCourses.push({
+            id: course.id,
+            categoria_corso: course.categoria_corso,
+            nome_corso: course.nome_corso, // Assicurati di usare il nome corretto
+            descrizione: course.descrizione,
+            durata: course.durata,
+            numero_autorizzazione: getAuthNumber()
+        });
 
-        if (!course.assignedTo.includes(student._id)) {
-            course.assignedTo.push(student._id)
-            await course.save()
-            
-        }
+        await student.save();
 
-        res.redirect("/admin/dashboard/students");
+        res.redirect(`/admin/dashboard/students/details/${student._id}`);
     } catch (error) {
         console.error("Errore nell'assegnare il corso:", error);
         res.status(500).send("Errore nell'assegnare il corso");
@@ -141,11 +153,6 @@ exports.DeleteStudents = async (req,res) => {
         if(!student){
             return res.status(404).send('Corsista non trovato')
         }
-
-        await Course.updateMany(
-            {assignedTo: studentId},
-            {$pull: {assignedTo: studentId}}
-        )
 
         res.redirect('/admin/dashboard/students')
     } catch (error) {
